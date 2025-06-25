@@ -1,40 +1,40 @@
-query,RDB,status
-Apostolepis ambiniger,Apostolepis ambiniger,up_to_date
-Apostolepis ammodites,Apostolepis sanctaeritae,updated
-Apostolepis barrioi,Apostolepis dimidiata,updated
-Apostolepis cerradoensis,Apostolepis albicollaris,updated
-Apostolepis mariae,Apostolepis thalesdelemai,updated
-Apostolepis phillipsi,Apostolepis phillipsae,updated
-Apostolepis roncadori,Apostolepis vittata,updated
-Apostolepis tertulianobeui,Apostolepis assimilis,updated
-Chironius laurenti,Chironius dixoni,updated
-Chironius scurrulus,Chironius scurrula,updated
-Corallus hortulanus,Corallus cookii; Corallus hortulana,ambiguous
-Echinanthera amoena,Amnisiophis amoenus,updated
-Epictia collaris,Habrophallos collaris,updated
-Erythrolamprus cobellus,Erythrolamprus cobella,updated
-Hydrodynastes melanogigas,Hydrodynastes gigas,updated
-Liotyphlops beui,Liotyphlops ternetzii,updated
-Liotyphlops sousai,Liotyphlops ternetzii,updated
-Philodryas argentea,Xenoxybelis argenteus,updated
-Philodryas georgeboulengeri,Xenoxybelis boulengeri,updated
-Philodryas laticeps,Chlorosoma laticeps,updated
-Philodryas viridissima,Chlorosoma viridissimum,updated
-Phrynonax polylepis,Phrynonax sexcarinatus,updated
-Siagonodon acutirostris,Trilepida acutirostris,updated
-Taeniophallus affinis,Dibernardia affinis,updated
-Taeniophallus bilineatus,Dibernardia bilineata,updated
-Taeniophallus occipitalis,Adelphostigma occipitalis; Adelphostigma quadriocellata; Eutrachelophis papilio,ambiguous
-Taeniophallus persimilis,Dibernardia persimilis,updated
-Taeniophallus poecilopogon,Dibernardia poecilopogon,updated
-Taeniophallus quadriocellatus,Adelphostigma quadriocellata,updated
-Thamnodynastes almae,Dryophylax almae,updated
-Thamnodynastes cf. nattereri,Dryophylax nattereri,updated
-Thamnodynastes chaquensis,Dryophylax chaquensis,updated
-Thamnodynastes hypoconia,Dryophylax hypoconia,updated
-Thamnodynastes lanei,Zonateres lanei,updated
-Thamnodynastes phoenix,Dryophylax phoenix,updated
-Thamnodynastes ramonriveroi,Dryophylax ramonriveroi,updated
-Thamnodynastes rutilus,Mesotes rutilus,updated
-Thamnodynastes strigatus,Mesotes strigatus,updated
-Tomodon ocellatus,Tachymenis ocellata; Tachymenis trigonatus,ambiguous
+"query","RDB","status"
+"Apostolepis ambiniger","Apostolepis ambiniger","up_to_date"
+"Apostolepis ammodites","Apostolepis sanctaeritae","updated"
+"Apostolepis barrioi","Apostolepis dimidiata","updated"
+"Apostolepis cerradoensis","Apostolepis albicollaris","updated"
+"Apostolepis mariae","Apostolepis thalesdelemai","updated"
+"Apostolepis phillipsi","Apostolepis phillipsae","updated"
+"Apostolepis roncadori","Apostolepis vittata","updated"
+"Apostolepis tertulianobeui","Apostolepis assimilis","updated"
+"Chironius laurenti","Chironius dixoni","updated"
+"Chironius scurrulus","Chironius scurrula","updated"
+"Corallus hortulanus","Corallus cookii; Corallus hortulana","ambiguous"
+"Echinanthera amoena","Amnisiophis amoenus","updated"
+"Epictia collaris","Habrophallos collaris","updated"
+"Erythrolamprus cobellus","Erythrolamprus cobella","updated"
+"Hydrodynastes melanogigas","Hydrodynastes gigas","updated"
+"Liotyphlops beui","Liotyphlops ternetzii","duplicated"
+"Liotyphlops sousai","Liotyphlops ternetzii","duplicated"
+"Philodryas argentea","Xenoxybelis argenteus","updated"
+"Philodryas georgeboulengeri","Xenoxybelis boulengeri","updated"
+"Philodryas laticeps","Chlorosoma laticeps","updated"
+"Philodryas viridissima","Chlorosoma viridissimum","updated"
+"Phrynonax polylepis","Phrynonax sexcarinatus","updated"
+"Siagonodon acutirostris","Trilepida acutirostris","updated"
+"Taeniophallus affinis","Dibernardia affinis","updated"
+"Taeniophallus bilineatus","Dibernardia bilineata","updated"
+"Taeniophallus occipitalis","Adelphostigma occipitalis; Adelphostigma quadriocellata; Eutrachelophis papilio","ambiguous"
+"Taeniophallus persimilis","Dibernardia persimilis","updated"
+"Taeniophallus poecilopogon","Dibernardia poecilopogon","updated"
+"Taeniophallus quadriocellatus","Adelphostigma quadriocellata","updated"
+"Thamnodynastes almae","Dryophylax almae","updated"
+"Thamnodynastes cf. nattereri","Dryophylax nattereri","updated"
+"Thamnodynastes chaquensis","Dryophylax chaquensis","updated"
+"Thamnodynastes hypoconia","Dryophylax hypoconia","updated"
+"Thamnodynastes lanei","Zonateres lanei","updated"
+"Thamnodynastes phoenix","Dryophylax phoenix","updated"
+"Thamnodynastes ramonriveroi","Dryophylax ramonriveroi","updated"
+"Thamnodynastes rutilus","Mesotes rutilus","updated"
+"Thamnodynastes strigatus","Mesotes strigatus","updated"
+"Tomodon ocellatus","Tachymenis ocellata; Tachymenis trigonatus","ambiguous"

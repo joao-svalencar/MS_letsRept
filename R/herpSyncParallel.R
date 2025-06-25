@@ -1,4 +1,4 @@
-#' Synchronize species names using The Reptile Databas
+#' Synchronize species names using The Reptile Database
 #'
 #' @description
 #' Queries a list of species parsed to \code{herpSearch} and returns a dataframe with current valid names for querried species
@@ -52,7 +52,6 @@ herpSyncParallel <- function(x, solveAmbiguity = TRUE, cores = max(1, parallel::
       status <- "unknown"
       url <- result
     }
-    
     data.frame(query = species_name, RDB = RDB, status = status, url = url, stringsAsFactors = FALSE)
   }
   
@@ -66,31 +65,40 @@ herpSyncParallel <- function(x, solveAmbiguity = TRUE, cores = max(1, parallel::
   synSample <- df[df$RDB == "check Link", c("query", "url")]
   if(showProgress) message(sprintf("Sampling synonyms to approach ambiguity for %d species", nrow(synSample)))
   
-    for(i in seq_along(synSample$query))
-    {
-      RDB_new <- c()
-      status_new <- c()
+  if (nrow(synSample) > 0) {
+    ambiguity_results <- safeParallel(1:nrow(synSample), FUN = function(i) {
+      # For each species, resolve ambiguity using herpSynonyms
       spp_syn <- herpSynonyms(herpSpecies(synSample$url[i], getLink = TRUE, showProgress = FALSE), showProgress = FALSE)
       synonyms <- spp_syn$species[synSample$query[i] == spp_syn$synonyms]
       
-      if(length(synonyms)==1)
-      {
+      if (length(synonyms) == 1) {
         RDB_new <- synonyms
         status_new <- "updated"
-      }else
-        if(length(synonyms)>1)
-        {
-          RDB_new <- paste(synonyms, collapse = "; ")
-          status_new <- "ambiguous"
-        }else{
-          RDB_new <- "not_found"
-          status_new <- "not_found"
-        }
-      df$RDB[synSample$query[i]==df$query] <- RDB_new
-      df$status[synSample$query[i]==df$query] <- status_new
+      } else if (length(synonyms) > 1) {
+        RDB_new <- paste(synonyms, collapse = "; ")
+        status_new <- "ambiguous"
+      } else {
+        RDB_new <- "not_found"
+        status_new <- "not_found"
       }
-    return(df)
-  }else{
+      
+      list(query = synSample$query[i], RDB_new = RDB_new, status_new = status_new)
+    }, cores = cores, showProgress = showProgress)
+    
+    # Combine ambiguity results into a data frame
+    ambiguity_df <- do.call(rbind, lapply(ambiguity_results, function(res) {
+      data.frame(query = res$query, RDB = res$RDB_new, status = res$status_new, stringsAsFactors = FALSE)
+    }))
+    
+    # Update the main dataframe with the resolved results
+    for (i in 1:nrow(ambiguity_df)) {
+      df$RDB[df$query == ambiguity_df$query[i]] <- ambiguity_df$RDB[i]
+      df$status[df$query == ambiguity_df$query[i]] <- ambiguity_df$status[i]
+    }
+  }
+  
   return(df)
+  } else {
+    return(df)
   }
 }

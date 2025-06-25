@@ -1,46 +1,62 @@
 # updating nomenclature with letsHerp -------------------------------------
 
-# code chunks for the paper
-# install the package (CRAN or GitHub), load it, and view vignettes
-#install.packages("letsHerp")
+# install the package (GitHub), load it, and view vignettes
 devtools::install_github("joao-svalencar/letsHerp", ref="main", force=TRUE)
 library(letsHerp)
-browseVignettes("letsHerp")
+#browseVignettes("letsHerp")
 
-# code chunks for the paper
+?herpAdvancedSearch
+?herpSearch
+?herpSpecies
+?herpSplitCheck
+?herpSync
+?herpSynonyms #check
+?herpTidySyn
+
 #load Nogueira et al., (2019) Supp. Mat. Table S3 (georeferenced type localities)
 atlas <- read.csv(here::here("data", "raw", "atlas.csv"))
+#tz <- read.csv(here::here("data", "raw", "tz_reptiles.csv"))
 
-# code chunks for the paper
 # Creates a link for all snakes occurring in Brazil according to RDB
 snakes_br_link <- herpAdvancedSearch(location="Brazil", higher="snakes") # 450 spp
+
+
 # Samples each species higher taxa and respective URLs
 snakes_br <- herpSpecies(snakes_br_link, taxonomicInfo = FALSE, getLink = TRUE)
+snakes_br 
 
-sort(table(snakes_br$family), decreasing = TRUE) #nine families
-sort(table(snakes_br$genus[snakes_br$family=="Viperidae"]), decreasing = TRUE)
+
+#sort(table(snakes_br$family), decreasing = TRUE) #nine families
+#sort(table(snakes_br$genus[snakes_br$family=="Viperidae"]), decreasing = TRUE)
 
 atlas$species <- gsub("\\s{2,}", " ", atlas$species) #cleaning any existing double or more whitespaces from species names
 atlas$species <- trimws(gsub("\\s+", " ", atlas$species)) #cleaning any existing leading and trailing whitespaces
 
 # code chunks for the paper
 sum(atlas$species %in% snakes_br$species) # only 372 matching nomenclature
-review <- atlas$species[which(!atlas$species %in% snakes_br$species)]
+review <- atlas$species[which(!atlas$species %in% snakes_br$species)] #39 unmatched names 
 
-#review <- c(review, "Fake name")
+snakes_names <- herpSync(review, solveAmbiguity = TRUE)
+snakes_names
 
-snakes_names <- herpSyncParallel(review, solveAmbiguity = TRUE, cores = max(1, parallel::detectCores() - 1))
+table(snakes_names$status)
+# ambiguous duplicated up_to_date    updated 
+#    3          2           1           35
 
-write.csv(snakes_names[,c(1:3)], here::here("outputs", "review.csv"), row.names = FALSE)
+#to check duplicated and ambiguous species:
+herpTidySyn(snakes_names, filter = c("duplicated", "ambiguous"))
 
-snakes_names[snakes_names$RDB=="check Link", c(1:3)]
+#write.csv(snakes_names, here::here("outputs", "review.csv"), row.names = FALSE)
 
-snakes_names_new <- herpSyncParallel(review, cores = max(1, parallel::detectCores() - 1))
+# check the matched ones --------------------------------------------------
+matched <- atlas$species[which(atlas$species %in% snakes_br$species)]
 
-snakes_names[snakes_names$RDB=="check Link", c(1:3)]
-snakes_names_new[snakes_names$RDB=="check Link",c(1:3)]
+matched_names <- herpSplitCheck(matched, pubDate = 2019, FALSE)
+#write.csv(matched_names, here::here("outputs", "matched.csv"), row.names = FALSE)
+matched_names_parallel <- herpSplitCheck(matched, pubDate = 2019)
 
-names(snakes_names)[1] <- "species"
+herpTidySyn(matched_names_parallel, filter = "check_split")
+
 
 cl <- herpSpecies(snakes_names[snakes_names$species=="Corallus hortulanus","url"], getLink = TRUE,showProgress = FALSE)
 
@@ -63,6 +79,9 @@ duplicated(syn_br_atlas)
 
 # iucn example ------------------------------------------------------------
 #Boidae
+head(iucn)
+
+sort(table(iucn$family), decreasing = TRUE)
 iucnBoidae <- iucn[iucn$family=="Boidae",] #48 species
 rdb_boidaeLink <- herpAdvancedSearch(higher= "Boidae")
 rdb_boidae <- herpSpecies(rdb_boidaeLink, taxonomicInfo = TRUE, getLink = TRUE) #67 species
@@ -84,8 +103,9 @@ boidae_ambiguous[, -4]
 # Viperidae ---------------------------------------------------------------
 iucnVipers <- iucn[iucn$family=="Viperidae",] #314 species
 rdb_vipersLink <- herpAdvancedSearch(higher= "Viperidae")
-rdb_vipers <- herpSpecies(rdb_vipersLink, getLink = TRUE) #405 species
+rdb_vipers <- herpSpecies(rdb_vipersLink, taxonomicInfo = TRUE, getLink = TRUE) #405 species
 
+head(rdb_vipers)
 sum(iucnVipers$species %in% rdb_vipers$species) # 282
 
 review <- iucnVipers$species[which(!iucnVipers$species %in% rdb_vipers$species)] #32
@@ -94,5 +114,25 @@ review <- gsub("\\s{2,}", " ", review) #cleaning any existing double or more whi
 review <- trimws(gsub("\\s+", " ", review)) #cleaning any existing leading and trailing whitespaces
 
 
-vipers_ambiguous <- herpSyncParallel(review[1:10], solveAmbiguity = TRUE)
-vipers_ambiguous[,-4]
+system.time(
+vipers_ambiguous <- herpSync(review, solveAmbiguity = TRUE, showProgress = FALSE)
+)
+
+vipers_ambiguous[-4]
+
+nrow(allReptiles)
+nrow(allSynonyms)
+nrow(allSynonymsRef)
+
+sort(table(allSynonyms$species), decreasing = TRUE)
+allSynonyms$synonyms[allSynonyms$species=="Mediodactylus kotschyi"]
+
+median(as.integer(allReptiles$year))
+
+head(allReptiles)
+head(allSynonymsRef)
+
+letsHerp::allReptiles[allReptiles$family == "Sphenodontidae",] 
+table(allReptiles$order)
+
+sort(table(allReptiles$order), decreasing = TRUE)
