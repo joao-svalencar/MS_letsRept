@@ -3,71 +3,97 @@
 # install the package (GitHub), load it, and view vignettes
 devtools::install_github("joao-svalencar/letsHerp", ref="main", force=TRUE)
 library(letsHerp)
-#browseVignettes("letsHerp")
-
-?herpAdvancedSearch
-?herpSearch
-?herpSpecies
-?herpSplitCheck
-?herpSync
-?herpSynonyms #check
-?herpTidySyn
+browseVignettes("letsHerp")
 
 #load Nogueira et al., (2019) Supp. Mat. Table S3 (georeferenced type localities)
 atlas <- read.csv(here::here("data", "raw", "atlas.csv"))
-#tz <- read.csv(here::here("data", "raw", "tz_reptiles.csv"))
 
 # Creates a link for all snakes occurring in Brazil according to RDB
-snakes_br_link <- herpAdvancedSearch(location="Brazil", higher="snakes") # 450 spp
+snakes_br_link <- herpAdvancedSearch(higher = "snakes", location = "Brazil") # 450 spp
 
 
 # Samples each species higher taxa and respective URLs
-snakes_br <- herpSpecies(snakes_br_link, taxonomicInfo = FALSE, getLink = TRUE)
-snakes_br 
+snakes_br <- herpSpecies(snakes_br_link, taxonomicInfo = TRUE, getLink = TRUE, cores = 9)
+snakes_br
 
+# Exploring higher taxa information
+sort(table(snakes_br$family), decreasing = TRUE)
+sort(table(snakes_br$genus[snakes_br$family=="Viperidae"]), decreasing = TRUE)
 
-#sort(table(snakes_br$family), decreasing = TRUE) #nine families
-#sort(table(snakes_br$genus[snakes_br$family=="Viperidae"]), decreasing = TRUE)
+#atlas$species <- gsub("\\s{2,}", " ", atlas$species) #cleaning any existing double or more white spaces from species names
+#atlas$species <- trimws(gsub("\\s+", " ", atlas$species)) #cleaning any existing leading and trailing white spaces
 
-atlas$species <- gsub("\\s{2,}", " ", atlas$species) #cleaning any existing double or more whitespaces from species names
-atlas$species <- trimws(gsub("\\s+", " ", atlas$species)) #cleaning any existing leading and trailing whitespaces
-
-# code chunks for the paper
 sum(atlas$species %in% snakes_br$species) # only 372 matching nomenclature
 review <- atlas$species[which(!atlas$species %in% snakes_br$species)] #39 unmatched names 
 
-snakes_names <- herpSync(review, solveAmbiguity = TRUE)
+snakes_names <- herpSync(review, solveAmbiguity = TRUE, cores = 9)
 snakes_names
 
 table(snakes_names$status)
 # ambiguous duplicated up_to_date    updated 
-#    3          2           1           35
+#    3          2           1           33
 
 #to check duplicated and ambiguous species:
-herpTidySyn(snakes_names, filter = c("duplicated", "ambiguous"))
+herpTidySyn(snakes_names, filter = c("duplicated", "ambiguous")) #Table 3
 
-#write.csv(snakes_names, here::here("outputs", "review.csv"), row.names = FALSE)
+herpSearch("Corallus cookii")
+herpSearch("Corallus hortulana")
 
-# check the matched ones --------------------------------------------------
+herpSearch("Adelphostigma occipitalis")
+herpSearch("Adelphostigma quadriocellata")
+herpSearch("Eutrachelophis papilio")
+
+herpSearch("Tachymenis ocellata")
+herpSearch("Tachymenis trigonatus")
+
+herpSearch("Liotyphlops ternetzii")
+
+write.csv(snakes_names, here::here("outputs", "review.csv"), row.names = FALSE)
+
+# check for species taxonomic split ---------------------------------------
 matched <- atlas$species[which(atlas$species %in% snakes_br$species)]
 
-matched_names <- herpSplitCheck(matched, pubDate = 2019, FALSE)
-#write.csv(matched_names, here::here("outputs", "matched.csv"), row.names = FALSE)
-matched_names_parallel <- herpSplitCheck(matched, pubDate = 2019)
+split_check <- herpSplitCheck(matched, pubDate = 2019, cores = 9)
 
-herpTidySyn(matched_names_parallel, filter = "check_split")
+table(split_check$status)
+#check_split: 19; checked: 2; up_to_date: 351
+
+#to check check_split species:
+herpTidySyn(split_check, filter = c("check_split", "checked"))
+
+#Atractus
+herpSpecies(herpAdvancedSearch(synonym = "Atractus albuquerquei"), taxonomicInfo = T)
+herpSearch("Atractus stygius")
+
+herpSpecies(herpAdvancedSearch(synonym = "Atractus badius"), taxonomicInfo = T)
+herpSearch("Atractus akerios")
+
+herpSpecies(herpAdvancedSearch(synonym = "Atractus major"), taxonomicInfo = T)
+herpSearch("Atractus nawa", getRef = T)
+
+herpSpecies(herpAdvancedSearch(synonym = "Atractus snethlageae"), taxonomicInfo = T)
+herpSearch("Atractus snethlageae", getRef = T)
+
+#Chironius
+herpSpecies(herpAdvancedSearch(synonym = "Chironius bicarinatus"), taxonomicInfo = T)
+herpSearch("Chironius dracomaris", getRef = T)
+herpSearch("Chironius gouveai", getRef = T)
 
 
-cl <- herpSpecies(snakes_names[snakes_names$species=="Corallus hortulanus","url"], getLink = TRUE,showProgress = FALSE)
+herpSpecies(herpAdvancedSearch(synonym = "Chironius carinatus"), taxonomicInfo = T)
+herpSearch("Chironius nigelnoriegai", getRef = T)
 
-herpSynonyms(cl,showProgress = FALSE, getRef = TRUE)
+#Oxybelis aeneus
+herpSpecies(herpAdvancedSearch(synonym = "Oxybelis aeneus"), taxonomicInfo = T)
+herpSearch("Oxybelis inkaterra", getRef = T)
+herpSearch("Oxybelis koehleri", getRef = T)
+herpSearch("Oxybelis rutherfordi", getRef = T)
 
-herpSynonyms(snakes_names[snakes_names$species=="Chironius laurenti",],)
 
-cc <- herpSearch("Corallus cookii", ref = TRUE)
+write.csv(split_check, here::here("outputs", "matched.csv"), row.names = FALSE)
 
-cc$References
-cc$Comment
+#####################################################################################
+
 
 # #getting list of synonyms for all Brazilian snakes ----------------------
 syn_br <- herpSynonyms(snakes_br) #2537 synonyms
@@ -120,19 +146,9 @@ vipers_ambiguous <- herpSync(review, solveAmbiguity = TRUE, showProgress = FALSE
 
 vipers_ambiguous[-4]
 
-nrow(allReptiles)
-nrow(allSynonyms)
-nrow(allSynonymsRef)
 
-sort(table(allSynonyms$species), decreasing = TRUE)
-allSynonyms$synonyms[allSynonyms$species=="Mediodactylus kotschyi"]
-
-median(as.integer(allReptiles$year))
-
+# exploratory analyses ----------------------------------------------------
 head(allReptiles)
-head(allSynonymsRef)
-
-letsHerp::allReptiles[allReptiles$family == "Sphenodontidae",] 
-table(allReptiles$order)
+median(as.integer(allReptiles$year))
 
 sort(table(allReptiles$order), decreasing = TRUE)
