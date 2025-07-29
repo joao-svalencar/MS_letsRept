@@ -1,41 +1,13 @@
-library(letsHerp)
-library(ggplot2)
-# SquamBase nomenclature check --------------------------------------------
-allReptiles$year <- as.integer(allReptiles$year)
-summary(allReptiles$year)
+# SquamBase nomenclature update -------------------------------------------
 
-table(allReptiles$suborder, allReptiles$order)
-
-years <- as.data.frame(table(allReptiles$year, allReptiles$suborder))
-colnames(years) <- c("year", "suborder", "count")
-years$year <- as.integer(as.character(years$year))  # ensure year is numeric
-
-# Plot with ggplot2
-ggplot(years, aes(x = year, y = count, color = suborder)) +
-  geom_point(alpha = 0.7, size = 2) +
-  geom_smooth(method = "loess", se = FALSE, span = 0.3) +
-  scale_x_continuous(breaks = seq(1760, 2030, by = 10)) +
-  labs(
-    x = "Year",
-    y = "Number of Species Described",
-    color = "Suborder",
-    title = "Reptile Species Descriptions per Year by Suborder"
-  ) +
-  theme_minimal(base_size = 13) +
-  theme(
-    panel.grid.minor = element_blank(),
-    axis.text.x = element_text(angle = 45, hjust = 1)
-  )
-
-
-uetz_link <- herpAdvancedSearch(location = "-Arrakis")
-uetz <- herpSpecies(uetz_link, tcores = 9)
+uetz_link <- reptAdvancedSearch(location = "-Arrakis")
+uetz <- reptSpecies(uetz_link, tcores = 9)
 
 sum(squambase$species %in% uetz) # 11612 matches, 98.8% of SquamBase, 132 unmatched names 1.12%
 
 review <- squambase$species[which(!squambase$species %in% uetz)] #132 unmatched names 
 
-squam_new <- herpSync(review, solveAmbiguity = TRUE, cores = 9)
+squam_new <- reptSync(review, solveAmbiguity = TRUE, cores = 9)
 
 table(squam_new$status)
 #ambiguous: 3; duplicated: 24; unknown: 10; updated: 95
@@ -74,24 +46,24 @@ herpSearch("Madatyphlops arenarius") # "Madatyphlops cariei" is a fossil species
 # check for species taxonomic split ---------------------------------------
 split <- squambase$species[which(squambase$species %in% uetz)]
 
-split_check <- herpSplitCheck(split, pubDate = 2024, cores = 9)
+split_check <- reptSplitCheck(split, pubDate = 2024, cores = 9)
 
 table(split_check$status)
 #check_split     unknown  up_to_date 
 #   93            34       11485
 
-herpTidySyn(split_check, filter = "check_split")
-herpTidySyn(split_check, filter = "unknown")
+reptTidySyn(split_check, filter = "check_split")
+reptTidySyn(split_check, filter = "unknown")
 
 split_unk <- split_check[split_check$status=="unknown",]
 
-split_unk_check <- herpSplitCheck(split_unk$query, pubDate = 2024, cores = 9)
+split_unk_check <- reptSplitCheck(split_unk$query, pubDate = 2024, cores = 9)
 
-herpSearch("Coryphophylax brevicauda")
+reptSearch("Coryphophylax brevicauda")
 
-herpSpecies(herpAdvancedSearch(synonym = "Natrix natrix"), taxonomicInfo = T)
+reptSpecies(reptAdvancedSearch(synonym = "Natrix natrix"), taxonomicInfo = T)
 
-a <- herpSearch("Natrix natrix")
+a <- reptSearch("Natrix natrix")
 a$url
 
 Nn <- data.frame(species = a$species, url = a$url)
@@ -99,6 +71,4 @@ herpSynonyms(Nn)
 
 write.csv(squam_new, here::here("outputs", "squambase_split.csv"), row.names = FALSE)
 
-
-# iucn example ------------------------------------------------------------
 
