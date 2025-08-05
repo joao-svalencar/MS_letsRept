@@ -1,3 +1,6 @@
+# script to create Fig. 1 -------------------------------------------------
+
+devtools::install_github("joao-svalencar/letsRept", ref="main", force=TRUE)
 library(letsRept)
 library(ggplot2)
 library(colorblindr)
