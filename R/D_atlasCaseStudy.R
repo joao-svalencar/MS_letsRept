@@ -3,25 +3,25 @@
 # install the package (GitHub), and load it
 devtools::install_github("joao-svalencar/letsRept", ref="main", force=TRUE)
 library(letsRept)
-
+library(parallel)
 
 #load Nogueira et al., (2019) Supp. Mat. Table S3 (georeferenced type localities)
-atlas <- read.csv(here::here("data", "raw", "atlas.csv"))
+atlas <- read.csv(here::here("data", "atlas.csv"))
 
 # Creates a link for all snakes occurring in Brazil according to RDB
-snakes_br_link <- reptAdvancedSearch(higher = "snakes", location = "Brazil") # 450 spp
+snakes_br_link <- reptAdvancedSearch(higher = "snakes", location ="Brazil") # 450 spp
 
 # Samples each species higher taxa and respective URLs
-snakes_br <- reptSpecies(snakes_br_link, taxonomicInfo = TRUE, cores = 9)
+snakes_br <- reptSpecies(snakes_br_link, taxonomicInfo = TRUE, cores = (parallel::detectCores()-1))
 head(snakes_br)
-
+ 
 # Exploring higher taxa information
-reptStats(x = snakes_br)
+reptStats(x = snakes_br, verbose = TRUE)
 sort(table(snakes_br$family), decreasing = TRUE)
 
 review <- reptCompare(atlas$species, snakes_br$species, filter = "review") #39 unmatched names 
 
-snakes_names <- reptSync(review, solveAmbiguity = TRUE, cores = 9)
+snakes_names <- reptSync(review, solveAmbiguity = TRUE, cores = (parallel::detectCores()-1))
 snakes_names
 
 table(snakes_names$status)
@@ -53,7 +53,7 @@ taxize_sync <- gna_verifier(c("Corallus hortulanus",
                               "Liotyphlops sousai",
                               "Taeniophallus occipitalis",
                               "Tomodon ocellatus"),
-                            all_matches = TRUE)
+                              all_matches = TRUE)
 
 
 print(taxize_sync[,c("submittedName",
@@ -66,7 +66,7 @@ print(taxize_sync[,c("submittedName",
 # check for species taxonomic split ---------------------------------------
 matched <- reptCompare(atlas$species, snakes_br$species, filter = "matched") #372 unmatched names 
 
-split_check <- reptSplitCheck(matched, pubDate = 2019, cores = 9)
+split_check <- reptSplitCheck(matched, pubDate = 2019, cores = (parallel::detectCores()-1))
 
 table(split_check$status)
 #check_split: 19; up_to_date: 353
@@ -98,6 +98,5 @@ reptSpecies(herpAdvancedSearch(synonym = "Oxybelis aeneus"), taxonomicInfo = T)
 reptSearch("Oxybelis inkaterra", getRef = T)
 reptSearch("Oxybelis koehleri", getRef = T)
 reptSearch("Oxybelis rutherfordi", getRef = T)
-
 
 write.csv(split_check, here::here("outputs", "Table S2.csv"), row.names = FALSE)
