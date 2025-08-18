@@ -26,3 +26,7 @@ If you have any questions, please contact JP Vieira-Alencar at: joaopaulo.valenc
     - D_atlasCaseStudy.R
     - S_figure.R
 
+## Figures
+
+Figure 1 is completely reproducible using script `S_figure.R`. The template for figure 2 is available at: [Canva](https://www.canva.com/design/DAGvyZg7ejA/22wiiUURCI9G35vC-eYHrA/edit?utm_content=DAGvyZg7ejA&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
+
