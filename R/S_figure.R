@@ -25,7 +25,7 @@ fig1 <- ggplot(sppYears, aes(x = year, y = count, color = suborder)) +
           expand = c(0, 0)
         ) +
         scale_color_manual(
-        name = "Suborder",
+        name = "",
         values = c("Sauria" = "#0072B2",          # blue
                    "Serpentes" = "#D55E00",       # vermillion
                    "Amphisbaenia" = "#009E73"),   # bluish green
@@ -36,6 +36,7 @@ fig1 <- ggplot(sppYears, aes(x = year, y = count, color = suborder)) +
           ) +
         theme_minimal(base_size = 9) +
         theme(
+          legend.position = "bottom",
           panel.grid.minor = element_blank(),
           axis.text.x = element_text(angle = 45, hjust = 1)
           )
@@ -47,8 +48,8 @@ ggsave("Fig 1.png",
        device = png,
        plot = fig1,
        path = here::here("outputs", "figures"),
-       width = 168,
-       height = 80,
+       width = 180,
+       height = 100,
        units = "mm",
-       dpi = 300,
+       dpi = 1000,
 )

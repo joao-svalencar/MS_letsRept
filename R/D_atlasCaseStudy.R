@@ -25,11 +25,11 @@ snakes_names <- reptSync(review, solveAmbiguity = TRUE, cores = (parallel::detec
 snakes_names
 
 table(snakes_names$status)
-# ambiguous duplicated up_to_date    updated 
+# ambiguous synonymization up_to_date    updated 
 #    3          2           1           33
 
-#to check duplicated and ambiguous species:
-reptTidySyn(snakes_names, filter = c("duplicated", "ambiguous")) #Table 3
+#to check synonymization and ambiguous species:
+reptTidySyn(snakes_names, filter = c("synonymization", "ambiguous")) #Table 3
 
 reptSearch("Corallus cookii")
 reptSearch("Corallus hortulana")
