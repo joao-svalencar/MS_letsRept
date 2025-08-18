@@ -1,6 +1,8 @@
 
 # MS: *letsRept*: An R interface to the Reptile Database
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.16895979.svg)](https://doi.org/10.5281/zenodo.16895979)
+
 **Authors: João Paulo dos Santos Vieira-Alencar, H. Christoph Liedtke, Shai Meiri, Uri Roll, Peter Uetz and Javier Nori**
 
 This repository is a version control for the manuscript to be submitted [Biodiversity Informatics](https://journals.ku.edu/jbi).
