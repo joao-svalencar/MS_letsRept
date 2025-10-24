@@ -15,11 +15,19 @@ snakes_br_link <- reptAdvancedSearch(higher = "snakes", location ="Brazil") # 45
 snakes_br <- reptSpecies(snakes_br_link, taxonomicInfo = TRUE, cores = (parallel::detectCores()-1))
 head(snakes_br)
  
+
+failed_spp <- snakes_br[snakes_br$species %in% snakes_br$species[snakes_br$error == TRUE], c('species', 'url')]
+fail_check <- reptSpecies(dataList = failed_spp, taxonomicInfo = TRUE, cores = (parallel::detectCores()-1))
+snakes_br_2 <- snakes_br[snakes_br$species %in% snakes_br$species[is.na(snakes_br$error)], -c(8:10)]
+snakes_br_2 <- rbind(snakes_br_2, fail_check)
+snakes_br <- snakes_br_2[order(snakes_br_2$species),]
+
+
 # Exploring higher taxa information
 reptStats(x = snakes_br, verbose = TRUE)
-sort(table(snakes_br$family), decreasing = TRUE)
 
-review <- reptCompare(atlas$species, snakes_br$species, filter = "review") #39 unmatched names 
+reptCompare(atlas$species, snakes_br) #372 matched, 38 unmatched, one absent
+review <- reptCompare(atlas$species, snakes_br$species, filter = "review") #38 unmatched names 
 
 snakes_names <- reptSync(review, solveAmbiguity = TRUE, cores = (parallel::detectCores()-1))
 snakes_names
@@ -64,7 +72,7 @@ print(taxize_sync[,c("submittedName",
       n=length(taxize_sync$submittedName))
 
 # check for species taxonomic split ---------------------------------------
-matched <- reptCompare(atlas$species, snakes_br$species, filter = "matched") #372 unmatched names 
+matched <- reptCompare(atlas$species, snakes_br, filter = c("matched", "absent")) #372 unmatched names + 1 absent
 
 split_check <- reptSplitCheck(matched, pubDate = 2019, cores = (parallel::detectCores()-1))
 
