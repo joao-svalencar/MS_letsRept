@@ -5,7 +5,7 @@
 
 **Authors: João Paulo dos Santos Vieira-Alencar, H. Christoph Liedtke, Shai Meiri, Uri Roll, Peter Uetz and Javier Nori**
 
-This repository is a version control for the manuscript to be submitted [Biodiversity Informatics](https://journals.ku.edu/jbi).
+This repository is a version control for the manuscript published in [Biodiversity Informatics](https://journals.ku.edu/jbi/article/view/24329).
 
 Herein we include R scrips, raw-data and outputs of the paper. This repository was created purely to promote full reproductibility in an easy and transparent way. We also hope that our scripts might stimulate and facilitate further analyses with a similar framework.
 
